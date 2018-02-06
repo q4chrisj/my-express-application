@@ -5,7 +5,7 @@ const app = express();
 const AWS = require('aws-sdk');
 
 const USERS_TABLE = process.env.USERS_TABLE;
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 app.use(bodyParser.json({string:false}));
 
@@ -37,8 +37,8 @@ app.get('/users/:userId', function (req, res) {
 
 app.post('/users', function (req, res) {
     const {userId, name} = req.body;
-    if(typeof userID !== 'string') {
-        res.status(400).json({ errpr: '"userId" must be a string'});
+    if(typeof userId !== 'string') {
+        res.status(400).json({ error: '"userId" must be a string'});
     } else if (typeof name !== 'string') {
         res.status(400).json({ error: '"name" must be a string'});
     }
@@ -56,7 +56,7 @@ app.post('/users', function (req, res) {
             console.log(error);
             res.status(400).json({ error: 'Could not create user'});
         }
-        res.json({userID, name});
+        res.json({userId, name});
     });
 });
 

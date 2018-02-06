@@ -19,8 +19,8 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - { "Fn::GetAtt": ["UsersDynamoDBTable", "Arn"] }
-      environment:
-        USERS_TABLE: ${self:custom.tableName}
+  environment:
+    USERS_TABLE: ${self:custom.tableName}
 
 functions:
   app:

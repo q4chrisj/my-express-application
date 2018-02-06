@@ -51,13 +51,38 @@ app.post('/users', function (req, res) {
         }
     };
 
+    const getParams = {
+        TableName: USERS_TABLE,
+        Key: {
+            userId: userId
+        }
+    };
+
+    dynamoDb.get(getParams, (error, data) => {
+        console.log(data);
+        if(error) {
+            console.error(error, error.stack);
+            res.status(400).json({ error: "An error occured"});
+        } else if(data && data.Item && data.Item.userId === userId) {
+            console.log("User exists: ", data.Item.userId);
+            res.status(400).json({ error: "User exists: " + data.Item.userId})
+        }
+    });
+
     dynamoDb.put(params, (error) => {
         if(error) {
             console.log(error);
             res.status(400).json({ error: 'Could not create user'});
         }
-        res.json({userId, name});
+        console.log("Creating user: ", name);
+        res.status(200).json({userId, name});
     });
+
 });
 
 module.exports.handler = serverless(app);
+
+// USAGE:
+// export BASE_DOMAIN=https://rasdn7xasf.execute-api.us-east-1.amazonaws.com/dev
+// Create: curl -H "Content-Type: application/json" -X POST ${BASE_DOMAIN}/users -d '{"userId": "chrisj", "name": "Chris Jones"}'
+// Get: curl -H "Content-Type: application/json" -X GET ${BASE_DOMAIN}/users/chrisj
